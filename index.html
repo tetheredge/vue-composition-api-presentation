@@ -59,10 +59,11 @@
           <textarea data-template>
             Key components of the Composistion API
               - The setup method is the main method for the component, which is called only once
-              - The 'this' keyword is no longer used or available in the context of the component
+              - The 'this' keyword is no longer used or available in the context of the component,
+                because the component instance is not yet created when setup is executed
               - ref and reactive are the data objects used for the template
               - The setup method always has to return the objects, functions, watchers, and other
-                component features for the template to access the data from the component
+                component features to be exposed to the template
           </textarea>
         </section>
         <section data-markdown>
@@ -73,7 +74,7 @@
               - Only the entire object is reactive and not the individual values.  In order for
                 the template to receive updates the whole object has to be returned.
               - The template automatically can determine the values of the ref or reactive object
-                so there is not need to drill down into the object inside the template
+                so there is no need to drill down into the object inside the template
           </textarea>
         </section>
         <section data-markdown>
@@ -85,6 +86,8 @@
 
                 export default {
                   setup() {
+                    // ref takes an argument and wraps it within an object
+                    // with a value property
                     const uName = ref('Joe');
 
                     setTimeout(function() {
