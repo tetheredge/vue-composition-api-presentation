@@ -16,8 +16,422 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section data-markdown>
+          <textarea data-template>
+            ---
+            ## Vue.js version 3
+            ### Composition API
+            ---
+          </textarea>
+        </section>
+				<section data-markdown>
+          <textarea data-template>
+            What is the Composition API?
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            - It is an alternative way to write the logic for the components
+            - Reduces the amount of code re-used between multiple options in the same component
+            - Code that belongs together logically will be grouped together instead of
+              being split up between multiple options (data, methods, computed)
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            What are the differences between the Options API and
+            the Composition API?
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            - The setup method replaces the data, methods, computed, and watchers options from the
+              Options API
+            - The Composition API is function based
+            - In the Composition API the data is managed in refs or reactive objects instead of
+              the data option
+            - Methods become regular functions in the Composition API
+            - Computed properties and watchers are defined with imported functions from the vue package               in the Composition API
+            - In the Composition API you import ref, reactive, computed, watch and others from vue package
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Key components of the Composistion API
+              - The setup method is the main method for the component, which is called only once
+              - The 'this' keyword is no longer used or available in the context of the component
+              - ref and reactive are the data objects used for the template
+              - The setup method always has to return the objects, functions, watchers, and other
+                component features for the template to access the data from the component
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Reactivity
+              - Both ref and reactive are the objects used for dynamically updating
+                a template
+              - Only the entire object is reactive and not the individual values.  In order for
+                the template to receive updates the whole object has to be returned.
+              - The template automatically can determine the values of the ref or reactive object
+                so there is not need to drill down into the object inside the template
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Using a ref
+            <pre>
+              <code data-trim data-noescape>
+                import { ref } from 'vue';
+
+                export default {
+                  setup() {
+                    const uName = ref('Joe');
+
+                    setTimeout(function() {
+                      uName.value = 'Joseph';
+                    }, 2000);
+
+                   return { userName: uName };
+                  }
+                   // data() {
+                   //   return {
+                   //     userName: 'Joe',
+                   //   };
+                   // },
+                };
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Reactive objects
+              - Alternative to using a ref, which is explicitly used for objects
+              - Does not wrap the object into an extra object
+              - There is not a 'value' property to access
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Using a reactive object
+            <pre>
+              <code data-trim data-noescape>
+                import { reactive } from 'vue';
+
+                export default {
+                  setup() {
+                    const user = reactive({
+                      name: 'Joe',
+                      age: 31,
+                    });
+
+                    setTimeout(function () {
+                      user.name = 'Joseph';
+                      user.age = 32;
+                    }, 2000);
+
+                    return { user: user };
+                  },
+                };
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Functions
+              - The methods option is no longer used and the so called 'methods' are
+                now regular functions inside the setup method
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            <pre>
+              <code data-trim data-noescape>
+                import { ref } from 'vue';
+
+                export default {
+                  setup() {
+                    const uName = ref('Joe');
+                    const uAge = ref(31);
+
+                    function setNewAge() {
+                      uAge.value = 33;
+                    }
+
+                    return { userName: uName, age: uAge, setAge: setNewAge };
+                  },
+                };
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Computed properties
+              - The computed properties option is no longer used and is replace with the
+                computed function
+              - The computed items are then returned in the return statement in the setup method
+                to provide access in the template
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            <pre>
+              <code data-trim data-noescape>
+                import { ref, computed } from 'vue';
+
+                export default {
+                  setup() {
+                    const firstName = ref('');
+                    const lastName = ref('');
+                    const uName = computed(function() {
+                      return firstName.value + ' ' + lastName.value;
+                    });
+
+                    function setFirstName(event) {
+                      firstName.value = event.target.value;
+                    }
+
+                    function setLastName(event) {
+                      lastName.value = event.target.value;
+                    }
+
+                    return {
+                      userName: uName,
+                      setFirstName,
+                      setLastName,
+                    };
+                  }
+                };
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Watchers
+            <pre>
+              <code data-trim data-noescape>
+                import { ref, computed, watch } from 'vue';
+
+                export default {
+                  setup() {
+                    const firstName = ref('');
+                    const lastName = ref('');
+                    const uAge = ref(31);
+                    const uName = computed(function() {
+                      return firstName.value + ' ' + lastName.value;
+                    });
+
+                    // First example
+                    watch(uAge, function(newValue, oldValue) {
+                      console.log(newValue);
+                    });
+
+                    // Second example
+                    watch([uAge, uName], function(newValues, oldValues) {
+                      console.log('Old age: ' + oldValues[0]);
+                      console.log('New age: ' + newValues[0]);
+                      console.log('Old name: ' + oldValues[1]);
+                      console.log('New name: ' + newValues[1]);
+                    });
+
+                    function setNewAge() {
+                      uAge.value = 33;
+                    }
+
+                    return {
+                      userName: uName,
+                      age: uAge,
+                      setAge: setNewAge,
+                      firstName,
+                      lastName
+                    };
+                  }
+                };
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Props
+            <pre>
+              <code data-trim data-noescape>
+                import { computed } from 'vue';
+
+                export default {
+                  props: ['firstName', 'lastName', 'age'],
+                  setup(props) {
+                    const uName = computed(function() {
+                    return props.firstName + ' ' + props.lastName;
+                  });
+
+                  return { userName: uName };
+                };
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Emitting Custom Events
+              - The setup method takes a second argument called context, which contains attrs,
+                slots and the emit function
+              - attrs are the fall through attributes
+              - slots is for the slot data that can be accessed dynamically
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            <pre>
+              <code data-trim data-noescape>
+                import { computed } from 'vue';
+
+                export default {
+                  props: ['firstName', 'lastName', 'age'],
+                  setup(props, context) {
+                    const uName = computed(function () {
+                      return props.firstName + ' ' + props.lastName;
+                    });
+
+                    context.emit('save-data', 1); // this.$emit('save-data', 1);
+
+                    return { userName: uName };
+                  },
+                };
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Provide and Inject
+            <pre>
+              <code data-trim data-noescape>
+                import { ref, provide } from 'vue';
+
+                setup() {
+                  const uAge = ref(31);
+                  // two arguments passed to provide function
+                  // first is the key of your choice
+                  // second is the actual value you want to provide
+                  provide('userAge', uAge);
+
+                  return { age: uAge }
+                }
+
+                // Then in the other component you import inject
+                import { inject } from 'vue';
+
+                setup() {
+                  const age = inject('userAge');
+
+                  return { age }
+                }
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Lifecycle Hooks
+              - beforeCreate and created are not used in the Composition API
+                the setup method takes care of those
+              - beforeMount and mounted is replaced with onBeforeMount and onMounted
+              - beforeUpdate and updated is replaced with onBeforeUpdate and onUpdated
+              - beforeMount and unmounted is replaced with onBeforeUnmount, and onUnmounted
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            <pre>
+              <code data-trim data-noescpace>
+                import { onBeforeMount } from 'vue';
+
+                setup() {
+                  onBeforeMount(function() {
+                    console.log('called onBeforeMount');
+                  });
+                }
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Routing and params:
+              - Import hooks also known as composables from 'vue-router'
+              - Two main hooks are useRoute and useRouter
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            <pre>
+              <code data-trim data-noescape>
+                import { useRoute } from 'vue-router';
+
+                setup() {
+                  const router = useRoute();
+                  router.params.age
+                }
+
+                import { useRouter } from 'vue-router';
+
+                setup() {
+                  const router = useRouter();
+                  router.push('/cars');
+                }
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Vuex
+            <pre>
+              <code>
+                import { useStore } from 'vuex';
+
+                setup() {
+                  const store = useStore();
+                  store.dispatch('addCounter');
+                }
+              </code>
+            </pre>
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Summary
+              - Alternative to the Options API
+              - Uses the setup method to execute logic/data to the template
+              - It is a function based solution that allows you to keep
+                logically related code together
+              - Data can be managed as refs or reactive objects which are reactive,
+                but there nested values are not
+              - methods become regular functions defined in the setup method
+              - Computed properties and watchers are defined with imported functions from vue
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Summary continued:
+              - The setup method is called by Vue when the component is created and called
+                only once
+              - It defines the data and logic for the template
+              - It receives two arguments automatically the reactive props and the context, which
+                includes attrs, slots and the emit method
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            ### The End
+            ---
+          </textarea>
+        </section>
 			</div>
 		</div>
 
